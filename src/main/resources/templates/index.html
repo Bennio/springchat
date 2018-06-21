@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+    	<meta charset="utf-8"/>
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	
+		 <!-- include css in the header -->
+	    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}"/>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+   		<link rel="stylesheet" href="/css/jquery-ui-1.9.2.custom.min.css" type="text/css" media="screen" />
+	    <script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	    <script type="text/javascript" src="/js/jquery-ui-1.9.2.custom.min.js"></script>
+	    <link type="text/css" href="/css/jquery.ui.chatbox.css" rel="stylesheet" />
+	    <script type="text/javascript" src="/js/jquery.ui.chatbox.js"></script>
+	    <style type="text/css">
+	    	#error_message{
+	    		margin:2%; 
+	    		text-align:center;
+	    	}
+	    	
+	    </style>
+		<title>Accueil</title>
+			<script type="text/javascript">
+			$(document).ready(function(){
+				$("#thumbs").click(function(){
+		    		  alert("ici"); 
+		    	  }); 
+				
+			});
+	      $(document).ready(function(){
+	    	  
+	    	  $("#error_message").hide(); 
+	          var box = null;
+	          $("input[type='button']").click(function(event, ui) {
+	        	  name = $('#name').val();
+	        	  email = $('#email').val(); 
+	        	  phone = $('#phone').val(); 
+	        	  if((email == '' && phone == '') ||(name == '') ||((name == '') && (email == '')) || ((name == '') && (email == '')) || ((name == '') && (email == '') && (phone == '')))  {
+	        		  $("#error_message").show(); 
+	        		  setTimeout(function() {
+	        			     $("#error_message").fadeOut(1200);
+	        			  },3000);
+	        	  }else{  
+	        		   fname = name.split(" ");
+	        		  if(fname[0].length > 8){
+	        			  chatname = fname[0].substring(0,8); 
+	        		  }else{
+	        			  chatname = fname[0] ; 
+	        		  }
+		              if(box) {
+		                  box.chatbox("option", "boxManager").toggleBox();
+		              }
+		              else{
+		            	 
+		                  box = $("#chat_div").chatbox({id:chatname, 
+		                                                user:{key : "value"},
+		                                                title : " ",
+		                                                messageSent : function(id, user, msg) {
+		                                                  //  $("#log").append(id + " said: " + msg + "<br/>");
+		                                                    $("#chat_div").chatbox("option", "boxManager").addMsg(id, msg);
+		                                                   
+		                                                   quest = {
+		                                                		   "question_id":1,
+		                                                		   "question":msg,
+		                                                		   "question_status":1	                                                    
+		                                                		   } 
+		                                                   question = quest; 
+		                                                	   //JSON.stringify(quest);
+		                                                    console.log(question); 
+		                                                    $.post(
+		                                                    		"api/bot/question",
+				                                                    question,
+		                                                    	    function(data, status){
+		                                                    	      //  alert("Data: " + data + "\nStatus: " + status);
+		                                                    	        console.log(data); 
+		                                                    	        id = "Bot";  
+		                                                    	        $("#chat_div").chatbox("option", "boxManager").addMsg(id, data, true);
+		                                      
+		                                                    	    }
+		                                                  
+	                                                    	
+		                                                    ); 
+		                                                }});
+		              
+		              }
+		              
+		              $('#name').val('');
+		        	  $('#email').val(''); 
+		        	  $('#phone').val(''); 
+	        	  }
+	        	   
+		          });
+	          
+	      });
+	      
+	    </script>
+	</head>
+	<body>
+		<div class="row col-sm-3 form-horizontal" style="margin-left:1px; margin-top:4px; background-color:#cdeafb;">
+			<div class="row" style="text-align:center; margin-bottom:4px;margin-top:4px; font-weight:bold; font-size:130%;">Formulaire pour chater</div>
+			<div class="row form-group">
+				<label class="col-sm-3" for="name" >Nom</label>
+				<div class="col-sm-9">
+		    		<input type="text" id="name" name="name" class="form-control" placeholder="Votre nom..">
+		    	</div>
+		    </div>
+		    <div class=" row form-group">
+		    	<label class="col-sm-3" for="phone">T&eacute;l&eacute;phone</label>
+		    	<div class="col-sm-9">
+		    		<input  type="text" id="phone" name="phone" class="form-control" placeholder="Votre num&eacute;ro..">
+		    	</div>
+			</div>
+			<div class=" row form-group">
+				<label class="col-sm-3" for="email">Email</label>
+				<div class="col-sm-9">
+		    		<input type="email" id="email" name="email" class=" col-sm-8 form-control" placeholder="Votre email..">
+				</div>
+			</div>
+			
+			<input class="row form-group col-sm-5" style=" float:right; margin-right:14% ; font-weight:bolt; font-size:120%" type="button" name="toggle" value="Chat" />
+		
+		</div>
+	
+		<div class="col-sm-6 alert alert-warning" role="alert" id="error_message">
+			Entrez votre nom, votre phone et/ou votre email 
+		</div>
+		<div id="chat_div">
+	    </div>
+	    <!--  
+	    <hr />
+	    <div id="log">
+	    </div> -->
+	
+	</body>
+</html>
