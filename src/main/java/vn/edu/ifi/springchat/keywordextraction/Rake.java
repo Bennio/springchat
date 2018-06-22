@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,7 +23,7 @@ public class Rake {
     String language;
     String stopWordsPattern;
 
-    Rake(String language) {
+    public Rake(String language) {
         this.language = language;
 
         // Read the stop words file for the given language
@@ -97,7 +99,7 @@ public class Rake {
      * @param sentences
      * @return
      */
-    private String[] getKeywords(String[] sentences) {
+    public String[] getKeywords(String[] sentences) {
         ArrayList<String> phraseList = new ArrayList<>();
 
         for (String sentence : sentences) {
@@ -124,7 +126,7 @@ public class Rake {
      * @param phrases
      * @return
      */
-    private LinkedHashMap<String, Double> calculateWordScores(String[] phrases) {
+    public LinkedHashMap<String, Double> calculateWordScores(String[] phrases) {
         LinkedHashMap<String, Integer> wordFrequencies = new LinkedHashMap<>();
         LinkedHashMap<String, Integer> wordDegrees = new LinkedHashMap<>();
         LinkedHashMap<String, Double> wordScores = new LinkedHashMap<>();
@@ -155,7 +157,7 @@ public class Rake {
      * @param wordScores
      * @return
      */
-    private LinkedHashMap<String, Double> getCandidateKeywordScores(String[] phrases, LinkedHashMap<String, Double> wordScores) {
+    public LinkedHashMap<String, Double> getCandidateKeywordScores(String[] phrases, LinkedHashMap<String, Double> wordScores) {
         LinkedHashMap<String, Double> keywordCandidates = new LinkedHashMap<>();
 
         for (String phrase : phrases) {
@@ -210,12 +212,23 @@ public class Rake {
     }
     
    public static void main(String[] args) {
+	   String clean = " quelqu'un pour me donner a manger ici le mois de $ ci toute le monde va payer combien ( ) ? : ! c'est l'a bourse du mois cette année "; 
 	   Rake R = new Rake("fr"); 
-	   String[] phrase = {"combien coute la scolarite a ifi pendant une année"}; 
+	   //final Pattern UNWANTED_SYMBOLS = Pattern.compile("(?!:--|[\\[\\]{}()+/\\\\])");
+	 //  Matcher unwantedMatcher = UNWANTED_SYMBOLS.matcher(clean);
+	   clean = clean.replaceAll("[^a-zA-Z0-9]", " ");
+	   System.out.println(clean);
+	   String[] phrase = {clean}; 
 	   String[] words =  R.getKeywords(phrase); 
+	   String[] unique = new HashSet<String>(Arrays.asList(words)).toArray(new String[0]);
 	   for(int i = 0 ; i< words.length; i++) {
 		   System.out.println(words[i]);
 	   }
+	   System.out.println("----------------------------------");
+	   for(int i = 0 ; i< unique.length; i++) {
+		   System.out.println(unique[i]);
+	   }
+	   
    }
 
 }

@@ -27,6 +27,11 @@
                 this.boxManager.addMsg(user.first_name, msg);
             },
             boxClosed: function(id) {
+            	$("#question_message").show(); 
+      		  setTimeout(function() {
+      			     $("#error_message").fadeOut(1200);
+      			  },3000);
+            	//alert("close"); 
             }, // called when the close icon is clicked
             boxManager: {
                 // thanks to the widget factory facility
@@ -50,8 +55,8 @@
                     } else {
                     	if (peer  && bot == true) {
                             var peerName = document.createElement("b");
-                            peerName.setAttribute('class', 'glyphicon glyphicon-thumbs-up fa-3x');
-                            peerName.setAttribute('id', 'thumbs');
+                           // peerName.setAttribute('class', 'glyphicon glyphicon-thumbs-up fa-3x');
+                           // peerName.setAttribute('id', 'thumbs');
                             $(peerName).text(peer + ": ");
                             e.appendChild(peerName);
                         }
