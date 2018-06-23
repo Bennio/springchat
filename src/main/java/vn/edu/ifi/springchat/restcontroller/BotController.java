@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.tartarus.snowball.ext.FrenchStemmer;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -26,6 +27,7 @@ import com.jayway.jsonpath.internal.filter.ValueNode.JsonNode;
 
 import vn.edu.ifi.springchat.entity.Question;
 import vn.edu.ifi.springchat.entity.Response;
+import vn.edu.ifi.springchat.googleurlsearch.Crawler;
 import vn.edu.ifi.springchat.keywordextraction.Rake;
 import vn.edu.ifi.springchat.repository.QuestionRepository;
 import vn.edu.ifi.springchat.repository.ResponseRepository;
@@ -53,6 +55,7 @@ public class BotController {
 		String questionEqual = splitQuestion[1]; 
 		quest = quest+questionEqual.split("=")[1];
 		quest = quest.replace("+", " "); 
+		String query = quest ; 
 		// retrait des caractere speciaux 
 		quest = quest.replaceAll("[^a-zA-Z0-9]", " ");
 		quest = quest.trim(); 
@@ -62,7 +65,6 @@ public class BotController {
 		Rake R = new Rake("fr"); 
 		String[] questionPhrase = {quest}; 
 		// have unique words from user
-		
 		String[] listWordQuestion =  new HashSet<String>(Arrays.asList(R.getKeywords(questionPhrase))).toArray(new String[0]);
 		System.out.println("-------------------------------");
 		for(int i = 0 ; i < listWordQuestion.length; i++) {
@@ -103,8 +105,19 @@ public class BotController {
 		}
 		System.out.println("mot en commun "+maxCount);
 		if(listMax.size() == 0) {
-			String[] backQuestion = {"Que voulez vous dire par : ", };
-			quest = backQuestion[0]+quest ; 
+//			FrenchStemmer fStemmer = new  FrenchStemmer(); 
+//			for(int i=0 ; i< listWordQuestion.length; i++) {
+//				String query = listWordQuestion.toString(); 
+				Crawler google = new Crawler(); 
+				//google.getDataFromGoogle(query); 
+//				fStemmer.setCurrent(listWordQuestion[i]);
+//				if(fStemmer.stem()) {
+//					System.out.println(" stemming : "+fStemmer.getCurrent());
+//				}
+//			}
+//			String[] backQuestion = {"Que voulez vous dire par : ", };
+			quest  = google.getDataFromGoogle(query); 
+//			= backQuestion[0]+quest ; 
 		}else if(listMax.size() == 1) {
 			String stringResponse = RepoResponse.findById(listMax.get(0)).toString();
 			String[] tabResponse = stringResponse.split("#"); 
