@@ -21,7 +21,7 @@ public class Crawler {
 		patternDomainName = Pattern.compile(DOMAIN_NAME_PATTERN);
 	 }
 	public String getDataFromGoogle(String query) {
-		String crawler = "www.ifi.edu.vn"; 
+		String crawler = "http://www.ifi.edu.vn"; 
 		System.out.println("institut francophone innovation"+" "+query);
 		query = "institut francophone innovation"+" "+query; 
 		Set<String> result = new HashSet<String>();	

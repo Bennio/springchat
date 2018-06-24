@@ -16,11 +16,23 @@
 function ValidURL(str) {
   var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
   if(!regex .test(str)) {
-   // alert("Please enter valid URL.");
     return false;
   } else {
     return true;
   }
+}
+function Question(quest){
+	tab = quest.split(" "); 
+	alert(tab[0]); 
+	switch(tab[0]){
+		case 'Désolé':{
+			return true ; 
+			break; 
+		} 
+		default:{
+			
+		}
+	}
 }
 (function($) {
     $.widget("ui.chatbox", {
@@ -74,6 +86,8 @@ function ValidURL(str) {
 
                     var msgElement = document.createElement( systemMessage ? "i" : "span" );
                    
+                    Question(msg); 
+                    
             		if(ValidURL(msg)){
             			var parser = document.createElement('a');
             			var linkText = document.createTextNode(msg);
@@ -81,10 +95,44 @@ function ValidURL(str) {
             			parser.href = msg;
             			parser.setAttribute('target', '_blank');
             			e.appendChild(parser);
+            			if(Question(msg) == true){
+                  			// yes
+            				var parseryes = document.createElement('a');
+                  			var buttonyes = document.createElement('button'); 
+                  			buttonyes.appendChild(document.createTextNode("Oui"))
+                  			parseryes.appendChild(buttonyes);
+                  			parseryes.href = "#";
+                  			// no
+                  			var parserno = document.createElement('a');
+                  			var buttonno = document.createElement('button'); 
+                  			buttonno.appendChild(document.createTextNode("Non"))
+                  			parserno.appendChild(buttonno);
+                  			parserno.href = "#";
+                  			e.appendChild(parseryes);
+                  			e.appendChild(parserno); 
+                  		}
             		}else{
             			 $(msgElement).text(msg);
             			 e.appendChild(msgElement);
+            			 if(Question(msg) == true){
+            				// yes
+             				var parseryes = document.createElement('a');
+                   			var buttonyes = document.createElement('button'); 
+                   			buttonyes.appendChild(document.createTextNode("Oui"))
+                   			parseryes.appendChild(buttonyes);
+                   			parseryes.href = "#";
+                   			// no
+                   			var parserno = document.createElement('a');
+                   			var buttonno = document.createElement('button'); 
+                   			buttonno.appendChild(document.createTextNode("Non"))
+                   			parserno.appendChild(buttonno);
+                   			parserno.href = "#";
+                   			e.appendChild(parseryes);
+                   			e.appendChild(parserno);  
+                 		}
+            			 
             		}
+            		
                     //$(msgElement).text(msg);
                    // e.appendChild(msgElement);
                     $(e).addClass("ui-chatbox-msg");

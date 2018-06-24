@@ -100,7 +100,7 @@ public class Question {
 	}
 	@Override
 	public String toString() {
-		return question_id+"#"+question+"#"+question_status+"#"+response.getResponse_id() ; 
+		return question_id.toString()+"#"+question+"#"+question_status+"#"+response.getResponse_id() ; 
 	}
 	// one to many
 	@OneToMany

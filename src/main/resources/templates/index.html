@@ -30,8 +30,8 @@
 		<title>Accueil</title>
 			<script type="text/javascript">
 			$(document).ready(function(){
-				$("#thumbs").click(function(){
-		    		  alert("ici"); 
+				$("#answeryes").click(function(){
+		    		  alert("yes"); 
 		    	  }); 
 				
 			});
@@ -95,6 +95,7 @@
 		              $('#name').val('');
 		        	  $('#email').val(''); 
 		        	  $('#phone').val(''); 
+		        	  $('#formchat').hide(); 
 	        	  }
 	        	   
 		          });
@@ -104,7 +105,7 @@
 	    </script>
 	</head>
 	<body>
-		<div class="row col-sm-3 form-horizontal" style="margin-left:1px; margin-top:4px; background-color:#cdeafb;">
+		<div id="formchat" class="row col-sm-3 form-horizontal" style="margin-left:1px; margin-top:4px; background-color:#cdeafb;">
 			<div class="row" style="text-align:center; margin-bottom:4px;margin-top:4px; font-weight:bold; font-size:130%;">Formulaire pour chater</div>
 			<div class="row form-group">
 				<label class="col-sm-3" for="name" >Nom</label>
