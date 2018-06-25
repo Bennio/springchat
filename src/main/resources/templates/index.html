@@ -29,13 +29,9 @@
 	    </style>
 		<title>Accueil</title>
 			<script type="text/javascript">
+			
 			$(document).ready(function(){
-				$("#answeryes").click(function(){
-		    		  alert("yes"); 
-		    	  }); 
 				
-			});
-	      $(document).ready(function(){
 	    	  $("#question_message").hide(); 
 	    	  $("#error_message").hide(); 
 	          var box = null;
@@ -96,6 +92,7 @@
 		        	  $('#email').val(''); 
 		        	  $('#phone').val(''); 
 		        	  $('#formchat').hide(); 
+		        	 
 	        	  }
 	        	   
 		          });
@@ -133,18 +130,7 @@
 		<div class="col-sm-6 alert alert-warning" role="alert" id="error_message">
 			Entrez votre nom, votre phone et/ou votre email 
 		</div>
-		<div class="col-sm-3 alert alert-success" role="alert" id="question_message">
-			<p>&ecirc;tez satifaites de la conversation ?</p>
-			<form method="POST">
-			    <label class="radio-inline">
-			      <input type="radio" name="optradio">Oui
-			    </label>
-			    <label class="radio-inline">
-			      <input type="radio" name="optradio">Non
-			    </label>
-			    <input type="submit" valur="ok" name="OK" >
-			  </form>
-		</div>
+
 		<div id="chat_div">
 	    </div>
 	    <!--  

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMethodMappingNamingStrategy;
 import org.tartarus.snowball.ext.FrenchStemmer;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -39,16 +40,27 @@ public class BotController {
 	
 	public static Long rememberQuestion = null ; 
 	
+	public static String rememberString = null ; 
+	
 	@Autowired
 	QuestionRepository RepoQuestion ; 
 	
 	@Autowired 
 	ResponseRepository RepoResponse ; 
 	
-	@RequestMapping("/answeryes")
-	public String answerYes() {
-		BotController.rememberQuestion = null; 
-		return "ok"; 
+	@RequestMapping(value="/answeryesno", method=RequestMethod.POST)
+	public String answerYes(@RequestBody String answer) {
+		System.out.println(" yes no"); 
+		String response = " yes no"; 
+//		if(answer.equals("yes")) {
+//			Question question = RepoQuestion.findById(rememberQuestion).get(); 
+//			response = RepoResponse.findById(question.getResponse().getResponse_id()).get().getResponse();
+//		}else if(answer.equals("no")) {
+//			Crawler google = new Crawler(); 
+//			response  = google.getDataFromGoogle(rememberString); 
+//		}
+//		BotController.rememberQuestion = null; 
+		return response ; 
 	}
 	
 	@RequestMapping(value="/question",method=RequestMethod.POST)
@@ -65,6 +77,7 @@ public class BotController {
 		// retrait des caractere speciaux 
 		quest = quest.replaceAll("[^a-zA-Z0-9]", " ");
 		quest = quest.trim(); 
+		rememberString = quest ; 
 		// Fin extaction
 		System.out.println("ici la question posee est : "+quest);
 		listQuestionBase = RepoQuestion.findAll(); 

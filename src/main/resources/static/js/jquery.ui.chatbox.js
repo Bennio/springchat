@@ -13,6 +13,7 @@
 
 
 // TODO: implement destroy()
+
 function ValidURL(str) {
   var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
   if(!regex .test(str)) {
@@ -23,9 +24,10 @@ function ValidURL(str) {
 }
 function Question(quest){
 	tab = quest.split(" "); 
-	alert(tab[0]); 
+	//alert(tab[0]); 
 	switch(tab[0]){
 		case 'Désolé':{
+			console.log("desole"); 
 			return true ; 
 			break; 
 		} 
@@ -35,6 +37,7 @@ function Question(quest){
 	}
 }
 (function($) {
+	
     $.widget("ui.chatbox", {
         options: {
             id: null, //id for the DOM element
@@ -48,7 +51,7 @@ function Question(quest){
                 this.boxManager.addMsg(user.first_name, msg);
             },
             boxClosed: function(id) {
-            	$("#question_message").show(); 
+            	$("#formchat").show(); 
       		  setTimeout(function() {
       			     $("#error_message").fadeOut(1200);
       			  },3000);
@@ -64,9 +67,13 @@ function Question(quest){
                     var self = this;
                     var box = self.elem.uiChatboxLog;
                     var e = document.createElement('div');
+                    
                     box.append(e);
-                    $(e).hide();
-
+                    //$(e).hide();
+                    $(e).show();
+                    $(e).addClass("ui-chatbox-msg");
+                    $(e).css("maxWidth", $(box).width());
+                    
                     var systemMessage = false;
 
                     if (peer  && bot == false) {
@@ -76,8 +83,6 @@ function Question(quest){
                     } else {
                     	if (peer  && bot == true) {
                             var peerName = document.createElement("b");
-                           // peerName.setAttribute('class', 'glyphicon glyphicon-thumbs-up fa-3x');
-                           // peerName.setAttribute('id', 'thumbs');
                             $(peerName).text(peer + ": ");
                             e.appendChild(peerName);
                         }
@@ -97,46 +102,69 @@ function Question(quest){
             			e.appendChild(parser);
             			if(Question(msg) == true){
                   			// yes
-            				var parseryes = document.createElement('a');
-                  			var buttonyes = document.createElement('button'); 
+                  			var buttonyes = document.createElement('div'); 
                   			buttonyes.appendChild(document.createTextNode("Oui"))
-                  			parseryes.appendChild(buttonyes);
-                  			parseryes.href = "#";
+                  			buttonyes.setAttribute('id', 'answeryes');
+                  			buttonyes.setAttribute('style', 'margin-right: 4px');
+                  			buttonyes.setAttribute("class","btn btn-success btn-xs");
+                  			
                   			// no
-                  			var parserno = document.createElement('a');
-                  			var buttonno = document.createElement('button'); 
+                  			var buttonno = document.createElement('div'); 
                   			buttonno.appendChild(document.createTextNode("Non"))
-                  			parserno.appendChild(buttonno);
-                  			parserno.href = "#";
-                  			e.appendChild(parseryes);
-                  			e.appendChild(parserno); 
+                  			buttonno.setAttribute('id', 'answerno');
+                  			buttonno.setAttribute("class","btn btn-info btn-xs");
+                  			
+                  			e.appendChild(buttonyes);
+                   			e.appendChild(buttonno);
                   		}
             		}else{
             			 $(msgElement).text(msg);
             			 e.appendChild(msgElement);
             			 if(Question(msg) == true){
             				// yes
-             				var parseryes = document.createElement('a');
-                   			var buttonyes = document.createElement('button'); 
+            				 var buttonyes = document.createElement('div'); 
                    			buttonyes.appendChild(document.createTextNode("Oui"))
-                   			parseryes.appendChild(buttonyes);
-                   			parseryes.href = "#";
-                   			// no
-                   			var parserno = document.createElement('a');
-                   			var buttonno = document.createElement('button'); 
-                   			buttonno.appendChild(document.createTextNode("Non"))
-                   			parserno.appendChild(buttonno);
-                   			parserno.href = "#";
-                   			e.appendChild(parseryes);
-                   			e.appendChild(parserno);  
+                   			buttonyes.setAttribute('id', 'answeryes');
+                   			buttonyes.setAttribute('style', 'margin-right: 4px');
+                   			buttonyes.setAttribute("class","btn btn-success btn-xs");
+                   			
+                   		// no
+                  			var buttonno = document.createElement('div'); 
+                  			buttonno.appendChild(document.createTextNode("Non"))
+                  			buttonno.setAttribute('id', 'answerno');
+                  			buttonno.setAttribute("class","btn btn-info btn-xs");
+            
+                   			e.appendChild(buttonyes);
+                   			e.appendChild(buttonno);
+                    		
+                   
                  		}
             			 
             		}
             		
+            		$("div#answeryes.btn.btn-success.btn-xs").on('click',function(event, ui) {
+       				 console.log('yes'); 
+       				 answer = {
+       						 	"answer":"yes"
+       				 			}; 
+	       				 $.post(
+	                     		"api/bot/answeryesno",
+	                             answer,
+	                     	    function(data, status){
+	                     	        alert("Data: " + data + "\nStatus: " + status);
+	                     	        console.log(data); 
+	                     	        id = "Bot";  
+	                     	        $("#chat_div").chatbox("option", "boxManager").addMsg(id, data, true);
+	       
+	                     	    }
+	                     ); 
+       			 	}); 
+            		$("div#answerno.btn.btn-info.btn-xs").on('click',function(event, ui) {
+          				console.log('test no'); 
+          			 }); 
                     //$(msgElement).text(msg);
                    // e.appendChild(msgElement);
-                    $(e).addClass("ui-chatbox-msg");
-                    $(e).css("maxWidth", $(box).width());
+                    
                     $(e).fadeIn();
                     self._scrollToBottom();
 
@@ -145,6 +173,7 @@ function Question(quest){
                         self.highlightLock = true;
                         self.highlightBox();
                     }
+                   
                 },
                 highlightBox: function() {
                     var self = this;
@@ -268,7 +297,7 @@ function Question(quest){
                 .appendTo(uiChatboxInput)
                 .keydown(function(event) {
                     if (event.keyCode && event.keyCode == $.ui.keyCode.ENTER) {
-                    	//event.preventDefault();
+                    	event.preventDefault();
                         msg = $.trim($(this).val());
                         if (msg.length > 0) {
                             self.options.messageSent(self.options.id, self.options.user, msg);
