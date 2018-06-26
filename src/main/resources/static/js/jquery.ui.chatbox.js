@@ -105,13 +105,15 @@ function Question(quest){
                   			var buttonyes = document.createElement('div'); 
                   			buttonyes.appendChild(document.createTextNode("Oui"))
                   			buttonyes.setAttribute('id', 'answeryes');
-                  			buttonyes.setAttribute('style', 'margin-right: 4px');
+                  			buttonyes.setAttribute('value', 'yes');
+                  			buttonyes.setAttribute('style', 'margin-left:4px;margin-right: 4px');
                   			buttonyes.setAttribute("class","btn btn-success btn-xs");
                   			
                   			// no
                   			var buttonno = document.createElement('div'); 
                   			buttonno.appendChild(document.createTextNode("Non"))
                   			buttonno.setAttribute('id', 'answerno');
+                  			buttonno.setAttribute('value', 'no');
                   			buttonno.setAttribute("class","btn btn-info btn-xs");
                   			
                   			e.appendChild(buttonyes);
@@ -125,13 +127,15 @@ function Question(quest){
             				 var buttonyes = document.createElement('div'); 
                    			buttonyes.appendChild(document.createTextNode("Oui"))
                    			buttonyes.setAttribute('id', 'answeryes');
-                   			buttonyes.setAttribute('style', 'margin-right: 4px');
+                   			buttonyes.setAttribute('value', 'yes');
+                   			buttonyes.setAttribute('style', 'margin-left:4px; margin-right: 4px');
                    			buttonyes.setAttribute("class","btn btn-success btn-xs");
                    			
                    		// no
                   			var buttonno = document.createElement('div'); 
                   			buttonno.appendChild(document.createTextNode("Non"))
                   			buttonno.setAttribute('id', 'answerno');
+                  			buttonno.setAttribute('value', 'no');
                   			buttonno.setAttribute("class","btn btn-info btn-xs");
             
                    			e.appendChild(buttonyes);
@@ -143,16 +147,17 @@ function Question(quest){
             		}
             		
             		$("div#answeryes.btn.btn-success.btn-xs").on('click',function(event, ui) {
-       				 console.log('yes'); 
+       				 console.log($(this).attr('value')); 
        				 answer = {
-       						 	"answer":"yes"
+       						 	"answer":$(this).attr('value')
        				 			}; 
+       				
 	       				 $.post(
 	                     		"api/bot/answeryesno",
 	                             answer,
 	                     	    function(data, status){
-	                     	        alert("Data: " + data + "\nStatus: " + status);
-	                     	        console.log(data); 
+	                     	       // alert("Data: " + data + "\nStatus: " + status);
+	                     	        console.log("yes"+data); 
 	                     	        id = "Bot";  
 	                     	        $("#chat_div").chatbox("option", "boxManager").addMsg(id, data, true);
 	       
@@ -160,7 +165,21 @@ function Question(quest){
 	                     ); 
        			 	}); 
             		$("div#answerno.btn.btn-info.btn-xs").on('click',function(event, ui) {
-          				console.log('test no'); 
+            			 answer = {
+        						 	"answer":$(this).attr('value')
+        				 			}; 
+        				
+ 	       				 $.post(
+ 	                     		"api/bot/answeryesno",
+ 	                             answer,
+ 	                     	    function(data, status){
+ 	                     	       // alert("Data: " + data + "\nStatus: " + status);
+ 	                     	        console.log("data "+data); 
+ 	                     	        id = "Bot";  
+ 	                     	        $("#chat_div").chatbox("option", "boxManager").addMsg(id, data, true);
+ 	       
+ 	                     	    }
+ 	                     ); 
           			 }); 
                     //$(msgElement).text(msg);
                    // e.appendChild(msgElement);

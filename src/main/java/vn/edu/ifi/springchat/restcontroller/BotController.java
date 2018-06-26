@@ -49,17 +49,19 @@ public class BotController {
 	ResponseRepository RepoResponse ; 
 	
 	@RequestMapping(value="/answeryesno", method=RequestMethod.POST)
-	public String answerYes(@RequestBody String answer) {
-		System.out.println(" yes no"); 
-		String response = " yes no"; 
-//		if(answer.equals("yes")) {
-//			Question question = RepoQuestion.findById(rememberQuestion).get(); 
-//			response = RepoResponse.findById(question.getResponse().getResponse_id()).get().getResponse();
-//		}else if(answer.equals("no")) {
-//			Crawler google = new Crawler(); 
-//			response  = google.getDataFromGoogle(rememberString); 
-//		}
-//		BotController.rememberQuestion = null; 
+	public String answerYes(@RequestBody String answer) { 
+		String response = "";
+		String[] resp = answer.split("="); 
+		System.out.println(resp[1]+" rember string  "+BotController.rememberString+" rember id "+ BotController.rememberQuestion);
+		if(resp[1].equalsIgnoreCase("yes")) {
+			Question question = RepoQuestion.findById(BotController.rememberQuestion).get(); 
+			response = RepoResponse.findById(question.getResponse().getResponse_id()).get().getResponse();
+		}else {
+			Crawler google = new Crawler(); 
+			response  = google.getDataFromGoogle(BotController.rememberString); 
+		}
+		BotController.rememberQuestion = null; 
+		BotController.rememberString= null ; 
 		return response ; 
 	}
 	
@@ -77,7 +79,8 @@ public class BotController {
 		// retrait des caractere speciaux 
 		quest = quest.replaceAll("[^a-zA-Z0-9]", " ");
 		quest = quest.trim(); 
-		rememberString = quest ; 
+		BotController.rememberString = quest ; 
+		System.out.println("Remember question :"+BotController.rememberString ); 
 		// Fin extaction
 		System.out.println("ici la question posee est : "+quest);
 		listQuestionBase = RepoQuestion.findAll(); 
@@ -147,6 +150,7 @@ public class BotController {
 				quest = stringResponse ; 
 			}else {
 				BotController.rememberQuestion = listMax.get(0); 
+				System.out.println("remember id  of the question : "+BotController.rememberQuestion);
 				quest = "Désolé mais voulez vous savoir : "+RepoQuestion.findById(listMax.get(0)).get().getQuestion(); 
 			}
 		}else{
@@ -184,6 +188,7 @@ public class BotController {
 			if(similar_1 == true) {
 				quest = RepoResponse.findById(index.get(0)).get().getResponse(); 
 			}else if(index.size() > 0 && similar_1 == false ) {
+				BotController.rememberQuestion =  index.get(0); 
 				System.out.println(" nombre de similaire identique : "+index.size());
 			//	Collections.sort(index);
 				quest = "Désolé mais voulez vous savoir : "+RepoQuestion.findById(index.get(0)).get().getQuestion(); 

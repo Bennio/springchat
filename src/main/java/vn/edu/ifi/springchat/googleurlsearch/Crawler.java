@@ -25,13 +25,14 @@ public class Crawler {
 		System.out.println("institut francophone innovation"+" "+query);
 		query = "institut francophone innovation"+" "+query; 
 		Set<String> result = new HashSet<String>();	
-		String request = "https://www.google.com/search?q=" + query + "&num=20";
+		String request = "https://www.google.com/search?q=" + query ;
 		System.out.println("Sending request..." + request);
 			
 		try {
+			System.out.println("Sending request...1");
 		      // fetch the document over HTTP
 		      Document doc = Jsoup.connect("http://google.com/search?q="+query).userAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36").get();
-		      
+		      System.out.println("Sending request...2");
 		      // get the page title
 		      String title = doc.title();
 		      //System.out.println("title: " + title);
