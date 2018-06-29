@@ -31,11 +31,14 @@
 			<script type="text/javascript">
 			
 			$(document).ready(function(){
-				
+				var name = " "; 
+	        	var phone = " ";
+	        	var email = " "; 
 	    	  $("#question_message").hide(); 
 	    	  $("#error_message").hide(); 
 	          var box = null;
 	          $("input[type='button']").click(function(event, ui) {
+	        	
 	        	  name = $('#name').val();
 	        	  email = $('#email').val(); 
 	        	  phone = $('#phone').val(); 
@@ -44,7 +47,8 @@
 	        		  setTimeout(function() {
 	        			     $("#error_message").fadeOut(1200);
 	        			  },3000);
-	        	  }else{  
+	        	  }else{
+	        		   
 	        		   fname = name.split(" ");
 	        		  if(fname[0].length > 8){
 	        			  chatname = fname[0].substring(0,8); 
@@ -104,27 +108,28 @@
 	<body>
 		<div id="formchat" class="row col-sm-3 form-horizontal" style="margin-left:1px; margin-top:4px; background-color:#cdeafb;">
 			<div class="row" style="text-align:center; margin-bottom:4px;margin-top:4px; font-weight:bold; font-size:130%;">Formulaire pour chater</div>
-			<div class="row form-group">
-				<label class="col-sm-3" for="name" >Nom</label>
-				<div class="col-sm-9">
-		    		<input type="text" id="name" name="name" class="form-control" placeholder="Votre nom..">
-		    	</div>
-		    </div>
-		    <div class=" row form-group">
-		    	<label class="col-sm-3" for="phone">T&eacute;l&eacute;phone</label>
-		    	<div class="col-sm-9">
-		    		<input  type="text" id="phone" name="phone" class="form-control" placeholder="Votre num&eacute;ro..">
-		    	</div>
-			</div>
-			<div class=" row form-group">
-				<label class="col-sm-3" for="email">Email</label>
-				<div class="col-sm-9">
-		    		<input type="email" id="email" name="email" class=" col-sm-8 form-control" placeholder="Votre email..">
-				</div>
-			</div>
+				<form action="" method="post" enctype="application/json">
+					<div class="row form-group">
+						<label class="col-sm-3" for="name" >Nom</label>
+						<div class="col-sm-9">
+		    				<input type="text" id="name" name="name" class="form-control" placeholder="Votre nom..">
+		    			</div>
+		    		</div>
+		    		<div class=" row form-group">
+		    			<label class="col-sm-3" for="phone">T&eacute;l&eacute;phone</label>
+		    			<div class="col-sm-9">
+		    				<input  type="text" id="phone" name="phone" class="form-control" placeholder="Votre num&eacute;ro..">
+		    			</div>
+					</div>
+					<div class=" row form-group">
+						<label class="col-sm-3" for="email">Email</label>
+						<div class="col-sm-9">
+		    				<input type="email" id="email" name="email" class=" col-sm-8 form-control" placeholder="Votre email..">
+						</div>
+					</div>
 			
-			<input class="row form-group col-sm-5" style=" float:right; margin-right:14% ; font-weight:bolt; font-size:120%" type="button" name="toggle" value="Chat" />
-		
+					<input class="row form-group col-sm-5" style=" float:right; margin-right:14% ; font-weight:bolt; font-size:120%" type="button" name="toggle" value="Chat" />
+				</form>
 		</div>
 	
 		<div class="col-sm-6 alert alert-warning" role="alert" id="error_message">

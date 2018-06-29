@@ -36,9 +36,11 @@ public class Crawler {
 		      // get the page title
 		      String title = doc.title();
 		      //System.out.println("title: " + title);
-		      
+		      System.out.println("Sending request...3");
 		      // get all links in page
-		      Elements links = doc.select("a[href]"); 
+		      Elements links = doc.select("a[href]");
+		      
+		      System.out.println("Sending request...4");
 		      boolean trouver = false ; 
 		      int i = 0; 
 		      while(trouver == false && i < links.size()) {

@@ -133,18 +133,83 @@ function Question(quest){
                    			
                    		// no
                   			var buttonno = document.createElement('div'); 
-                  			buttonno.appendChild(document.createTextNode("Non"))
+                  			buttonno.appendChild(document.createTextNode("Non"));
                   			buttonno.setAttribute('id', 'answerno');
                   			buttonno.setAttribute('value', 'no');
-                  			buttonno.setAttribute("class","btn btn-info btn-xs");
+                  			buttonno.setAttribute("class","btn btn-warning btn-xs");
             
                    			e.appendChild(buttonyes);
                    			e.appendChild(buttonno);
                     		
                    
+                 		}else{
+                 			if(peer === 'Bot'){
+                 				var div = document.createElement('div'); 
+                     			div.setAttribute('style', 'padding-top:2px;border-top:solid 1px black;  font-style:italic; font-size: 85%;');
+                     			var textsatisfy = document.createTextNode("Satisfaites de la reponse? :");
+                     		// OK
+                     			var bok = document.createElement('button'); 
+                     			bok.setAttribute('id', 'answerok');
+                     			bok.setAttribute('style', 'button'); 
+                     			bok.setAttribute("class","btn btn-success btn-xs");
+                     			bok.setAttribute('style', 'margin-left:4px; margin-right: 5px');
+                     			var buttonok = document.createElement('span'); 
+                      			buttonok.setAttribute('value', 'ok');
+                      			buttonok.setAttribute("class","glyphicon glyphicon-ok");
+                      			bok.appendChild(buttonok);
+                      			
+                      		// KO
+                      			var bko = document.createElement('button'); 
+                      			bko.setAttribute('id', 'answerko');
+                     			bko.setAttribute('style', 'button'); 
+                     			bko.setAttribute("class","btn btn-warning btn-xs");
+                     			var buttonko = document.createElement('span'); 
+                     			buttonko.setAttribute('value', 'ko');
+                     			buttonko.setAttribute("class"," glyphicon glyphicon-remove");
+                     			bko.appendChild(buttonko);
+                     			
+                     			div.appendChild(textsatisfy); 
+                      			div.appendChild(bok);
+                      			div.appendChild(bko);
+                      			e.appendChild(div);
+                 			}
+                 			
                  		}
             			 
             		}
+            		$("button#answerok").on('click',function(event, ui) {
+            			alert("ok"); 
+          				 answer = {
+          						 	"answer":1
+          				 			}; 
+          				
+   	       				 $.post(
+   	                     		"api/bot/answerokko",
+   	                             answer,
+   	                     	    function(data, status){
+   	                     	       alert(status); 
+   	                     	    }
+   	                     ); 
+   	       				 $(this).attr("disabled", true);
+   	       				 $("button#answerko").hide(); 
+          			});
+            		$("button#answerko").on('click',function(event, ui) {
+            			alert("ko"); 
+         				 answer = {
+         						 	"answer":0
+         				 			}; 
+         				
+  	       				 $.post(
+  	                     		"api/bot/answerokko",
+  	                             answer,
+  	                     	    function(data, status){
+  	                     			alert(status); 
+  	                     	    }
+  	                     ); 
+  	       				 $(this).attr("disabled", true);
+  	       				 $("button#answerok").hide(); 
+         			});
+            		
             		
             		$("div#answeryes.btn.btn-success.btn-xs").on('click',function(event, ui) {
        				 console.log($(this).attr('value')); 
@@ -163,8 +228,10 @@ function Question(quest){
 	       
 	                     	    }
 	                     ); 
+	       				 $(this).hide();
+	       				$("div#answerno.btn.btn-warning.btn-xs").hide(); 
        			 	}); 
-            		$("div#answerno.btn.btn-info.btn-xs").on('click',function(event, ui) {
+            		$("div#answerno.btn.btn-warning.btn-xs").on('click',function(event, ui) {
             			 answer = {
         						 	"answer":$(this).attr('value')
         				 			}; 
@@ -179,7 +246,9 @@ function Question(quest){
  	                     	        $("#chat_div").chatbox("option", "boxManager").addMsg(id, data, true);
  	       
  	                     	    }
- 	                     ); 
+ 	                     );
+ 	       				 $(this).hide();
+ 	       				 $("div#answeryes.btn.btn-success.btn-xs").hide(); 
           			 }); 
                     //$(msgElement).text(msg);
                    // e.appendChild(msgElement);

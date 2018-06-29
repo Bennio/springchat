@@ -8,15 +8,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.ws.ResponseWrapper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMethodMappingNamingStrategy;
 import org.tartarus.snowball.ext.FrenchStemmer;
@@ -26,12 +30,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.internal.filter.ValueNode.JsonNode;
 
+import vn.edu.ifi.springchat.controller.ChatUser;
 import vn.edu.ifi.springchat.entity.Question;
 import vn.edu.ifi.springchat.entity.Response;
+import vn.edu.ifi.springchat.entity.Satisfy;
 import vn.edu.ifi.springchat.googleurlsearch.Crawler;
 import vn.edu.ifi.springchat.keywordextraction.Rake;
 import vn.edu.ifi.springchat.repository.QuestionRepository;
 import vn.edu.ifi.springchat.repository.ResponseRepository;
+import vn.edu.ifi.springchat.repository.SatisfyRepository;
 import vn.edu.ifi.springchat.stringsimilarity.JaroWinkler;
 
 @RestController
@@ -42,26 +49,68 @@ public class BotController {
 	
 	public static String rememberString = null ; 
 	
+	public String userName = "Utilisateur"; 
+	
+	public String userEmail = "email@info.net";
+	
+	public String userPhone = " "; 
+	
 	@Autowired
 	QuestionRepository RepoQuestion ; 
 	
 	@Autowired 
 	ResponseRepository RepoResponse ; 
 	
+	@Autowired
+	SatisfyRepository RepoSatisfy; 
+	
+	
+	@RequestMapping(value="/user",  method=RequestMethod.POST)
+	public @ResponseBody boolean registerUser(@RequestBody String userInfo) {
+		System.out.println(userInfo); 
+		return true;
+	}
+	
+	
+	@RequestMapping(value="/answerokko", method=RequestMethod.POST)
+	public boolean anwswerOk(@RequestBody String okvalue) {
+		System.out.println(BotController.rememberQuestion+ " question : "+BotController.rememberString); 
+		String value[] = okvalue.split("="); 
+		System.out.println(value[1].trim().equalsIgnoreCase("1")+": OK : "+okvalue.equalsIgnoreCase("ok")+" : KO :  "+okvalue.equalsIgnoreCase("ko"));
+		if(value[1].trim().equalsIgnoreCase("1")) {
+			Question question = RepoQuestion.findById(BotController.rememberQuestion).get();
+			Satisfy satisfy = new Satisfy("serge",this.userEmail,  1, question); 
+			String msg =RepoSatisfy.save(satisfy).getSatisfy_name(); 
+			System.out.println(msg);
+		}else if(value[1].trim().equalsIgnoreCase("0")) {
+			Question question = new Question(BotController.rememberString); 
+			question = RepoQuestion.save(question); 
+			Satisfy satisfy = new Satisfy("daouda",this.userEmail, 0, question ); 
+			String msg =RepoSatisfy.save(satisfy).getSatisfy_name(); 
+			System.out.println(msg);
+		}
+		BotController.rememberQuestion = null; 
+		BotController.rememberString= null ; 
+		return true ; 
+	}
+	
 	@RequestMapping(value="/answeryesno", method=RequestMethod.POST)
 	public String answerYes(@RequestBody String answer) { 
 		String response = "";
 		String[] resp = answer.split("="); 
 		System.out.println(resp[1]+" rember string  "+BotController.rememberString+" rember id "+ BotController.rememberQuestion);
-		if(resp[1].equalsIgnoreCase("yes")) {
-			Question question = RepoQuestion.findById(BotController.rememberQuestion).get(); 
-			response = RepoResponse.findById(question.getResponse().getResponse_id()).get().getResponse();
+		if(BotController.rememberQuestion == null || BotController.rememberString == null) {
+			response = "Veillez reposer votre question"; 
 		}else {
-			Crawler google = new Crawler(); 
-			response  = google.getDataFromGoogle(BotController.rememberString); 
+			if(resp[1].equalsIgnoreCase("yes")) {
+				Question question = RepoQuestion.findById(BotController.rememberQuestion).get(); 
+				response = RepoResponse.findById(question.getResponse().getResponse_id()).get().getResponse();
+			}else {
+				Crawler google = new Crawler(); 
+				response  = google.getDataFromGoogle(BotController.rememberString); 
+			}
 		}
-		BotController.rememberQuestion = null; 
-		BotController.rememberString= null ; 
+		
 		return response ; 
 	}
 	
@@ -83,7 +132,7 @@ public class BotController {
 		System.out.println("Remember question :"+BotController.rememberString ); 
 		// Fin extaction
 		System.out.println("ici la question posee est : "+quest);
-		listQuestionBase = RepoQuestion.findAll(); 
+		listQuestionBase = RepoQuestion.findAllQuestionWhereAnswer_idNoEmpty();  
 		Rake R = new Rake("fr"); 
 		String[] questionPhrase = {quest}; 
 		// have unique words from user
@@ -141,6 +190,7 @@ public class BotController {
 			quest  = google.getDataFromGoogle(query); 
 //			= backQuestion[0]+quest ; 
 		}else if(listMax.size() == 1) {
+			BotController.rememberQuestion = listMax.get(0); 
 			String[] baseQuestion = {RepoQuestion.findById(listMax.get(0)).get().getQuestion().replaceAll("[^a-zA-Z0-9]", " ").trim()}; 
 			// have unique words from database question
 			String[] listWord = new HashSet<String>(Arrays.asList(R.getKeywords(baseQuestion))).toArray(new String[0]);
@@ -186,6 +236,7 @@ public class BotController {
 			}
 			System.out.println(" Fin test similarite ");
 			if(similar_1 == true) {
+				BotController.rememberQuestion =  index.get(0);
 				quest = RepoResponse.findById(index.get(0)).get().getResponse(); 
 			}else if(index.size() > 0 && similar_1 == false ) {
 				BotController.rememberQuestion =  index.get(0); 
