@@ -22,22 +22,24 @@
 		  </div>
 		</nav>
         <div class="container">
-		  <h3>Statistique 24H</h3>
+		  <div class="col-sm-6" style="font-weight:bold; font-size:150%;">Question non satisfaisante : <span th:text="${nbnotsatisfies}+'/'+${nbsatisfies}" ></span></div>
 		  <div class="col-sm-12">
 		  	 <table class="table table-striped">
    			 <thead>
 		      <tr>
+		      	<th>Numéro</th>
 		      	<th>Questions posées</th>
-		      	<th>Reponse satisfaites</th>
-		      	<th>Reponse non satistaites</th>
+		      	<th>Email</th>
+		      	<th>Phone</th>
 		      </tr>
 		  	</thead>
 		  	<tbody>
-			 	 <tr>
-			 	 	<td></td>
-			      	<td></td>
-			      	<td></td>
-			      </tr>
+			 	   <tr th:each="satisfy, iter: ${notsatisfies}">
+			 	   		<td th:text="${iter.index + 1}"></td>
+			 	   		<td th:each="question : ${questions}"  th:if="${question.question_id} == ${satisfy.question.question_id}"  th:text="${question.question}"></td>
+				        <td th:text="${satisfy.satisfy_email}"></td>
+				        <td th:text="${satisfy.satisfy_phone}"></td>
+				   </tr>
 			</tbody>
 			</table>
 			</div>

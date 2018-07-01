@@ -16,8 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import vn.edu.ifi.springchat.entity.Question;
 import vn.edu.ifi.springchat.entity.Response;
+import vn.edu.ifi.springchat.entity.Satisfy;
 import vn.edu.ifi.springchat.repository.QuestionRepository;
 import vn.edu.ifi.springchat.repository.ResponseRepository;
+import vn.edu.ifi.springchat.repository.SatisfyRepository;
 
 @Controller
 public class Chat {
@@ -28,6 +30,9 @@ public class Chat {
 	@Autowired 
 	ResponseRepository RepoResponse ; 
 	
+	@Autowired
+	SatisfyRepository RepoSatisfy;
+	
 	
 	@RequestMapping(value={ "/", "/chat"})
 	public String welcome() {
@@ -37,7 +42,16 @@ public class Chat {
 	
 	
 	@RequestMapping("/admin")
-	public String admin() {
+	public String admin(Model model) {
+		Long nbsatisfy = RepoSatisfy.count();
+	
+		List<Satisfy> listNotSatisfy = RepoSatisfy.findAllSatisfyWhereSatisfyZero(); 
+		List<Question> listQuestion = RepoQuestion.findAll(); 	
+		System.out.println("nombre satisfaites: "+listQuestion.size());
+		model.addAttribute("questions", listQuestion); 
+		model.addAttribute("notsatisfies", listNotSatisfy); 
+		model.addAttribute("nbsatisfies", nbsatisfy); 
+		model.addAttribute("nbnotsatisfies", listNotSatisfy.size()); 
 		return "admin"; 
 	}
 	

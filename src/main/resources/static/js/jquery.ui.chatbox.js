@@ -178,7 +178,7 @@ function Question(quest){
             			 
             		}
             		$("button#answerok").on('click',function(event, ui) {
-            			alert("ok"); 
+            			//alert("ok"); 
           				 answer = {
           						 	"answer":1
           				 			}; 
@@ -187,14 +187,14 @@ function Question(quest){
    	                     		"api/bot/answerokko",
    	                             answer,
    	                     	    function(data, status){
-   	                     	       alert(status); 
+   	                     	      // alert(status); 
    	                     	    }
    	                     ); 
    	       				 $(this).attr("disabled", true);
    	       				 $("button#answerko").hide(); 
           			});
             		$("button#answerko").on('click',function(event, ui) {
-            			alert("ko"); 
+            			//alert("ko"); 
          				 answer = {
          						 	"answer":0
          				 			}; 
@@ -203,7 +203,7 @@ function Question(quest){
   	                     		"api/bot/answerokko",
   	                             answer,
   	                     	    function(data, status){
-  	                     			alert(status); 
+  	                     			//alert(status); 
   	                     	    }
   	                     ); 
   	       				 $(this).attr("disabled", true);

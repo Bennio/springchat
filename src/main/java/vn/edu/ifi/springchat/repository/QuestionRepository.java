@@ -19,8 +19,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long>{
 	@Query("select question  from Question question where question.response is  not null")
 	List<Question> findAllQuestionWhereAnswer_idNoEmpty();  
 	
-//	@Modifying
-//	@Query("update  question set question.answer_id = :ans_id where question.question_id = :quest_id")
-//	int updateQuestionSetAnswer_idForQuestion_id(@Param("ans_id") Long ans_id, @Param("quest_id") Long quest_id);
 
 }
