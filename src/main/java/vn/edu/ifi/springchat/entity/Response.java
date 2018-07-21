@@ -75,12 +75,14 @@ public class Response {
 		this.response_status = response_status;
 	}
 
-	 @OneToMany(mappedBy = "response", cascade = CascadeType.ALL)
+	 @OneToMany
+	 @JoinColumn(name= "response_id")
+	 //@OneToMany(mappedBy = "response", cascade = CascadeType.ALL)
 	private List<Question> question = new ArrayList<Question>(); 
 	
-	@Override
+	/*@Override
 	public String toString() {
 		return response_id+"#"+response+"#"+response_status ; 
-	}
+	}*/
 
 }

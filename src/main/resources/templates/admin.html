@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
+    	<script src="webjars/jquery/1.9.1/jquery.js"></script>
      	<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
      	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-     	<script src="webjars/jquey/1.9.1/jquery.min.js"></script>
         <title>Administration</title>
     </head>
     <body>
@@ -31,18 +31,45 @@
 		      	<th>Questions posées</th>
 		      	<th>Email</th>
 		      	<th>Phone</th>
+		      	<th>Date</th>
+		      	<th>Reponse</th>
 		      </tr>
 		  	</thead>
 		  	<tbody>
 			 	   <tr th:each="satisfy, iter: ${notsatisfies}">
 			 	   		<td th:text="${iter.index + 1}"></td>
 			 	   		<td th:each="question : ${questions}"  th:if="${question.question_id} == ${satisfy.question.question_id}"  th:text="${question.question}"></td>
-				        <td th:text="${satisfy.satisfy_email}"></td>
-				        <td th:text="${satisfy.satisfy_phone}"></td>
+				        <td th:text="${satisfy.person.person_email}"></td>
+				        <td th:text="${satisfy.person.person_phone}"></td>
+				        <td th:text="${#dates.format(satisfy.satisfy_date, 'dd-MMM-yyyy')}"></td>
+				  		<td><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Reponse</button></td>
 				   </tr>
 			</tbody>
 			</table>
 			</div>
 		</div>
+		
+		<!-- Modal -->
+		<div id="myModal" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+		
+		    <!-- Modal content-->
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal">&times;</button>
+		        <h4 class="modal-title">Modal Header</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>Some text in the modal.</p>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		
+		  </div>
+		</div>
+		
+		
     </body>
 </html>

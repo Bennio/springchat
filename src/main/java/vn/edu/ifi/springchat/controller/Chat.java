@@ -44,7 +44,6 @@ public class Chat {
 	@RequestMapping("/admin")
 	public String admin(Model model) {
 		Long nbsatisfy = RepoSatisfy.count();
-	
 		List<Satisfy> listNotSatisfy = RepoSatisfy.findAllSatisfyWhereSatisfyZero(); 
 		List<Question> listQuestion = RepoQuestion.findAll(); 	
 		System.out.println("nombre satisfaites: "+listQuestion.size());
@@ -102,13 +101,11 @@ public class Chat {
 	}
 	
 	@RequestMapping("/questions")
-	public ModelAndView allQuestions() {
-		List<Question> allquestions = RepoQuestion.findAll();
+	public String allQuestions(Model model) {
+		List<Question> allquestions = RepoQuestion.findAllQuestionWhereAnswer_idNoEmpty();
 		List<Response> allresponses = RepoResponse.findAll(); 
-		ModelAndView model = new ModelAndView("questions"); 
-		model.addObject("questions", allquestions); 
-		model.addObject("responses", allresponses); 
-		return model ; 
+		model.addAttribute("questions", allquestions); 
+		return "questions" ; 
 	}
 
 	

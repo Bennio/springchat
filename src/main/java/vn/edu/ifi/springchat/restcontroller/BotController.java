@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.internal.filter.ValueNode.JsonNode;
 
-import vn.edu.ifi.springchat.controller.ChatUser;
+
 import vn.edu.ifi.springchat.entity.Person;
 import vn.edu.ifi.springchat.entity.Question;
 import vn.edu.ifi.springchat.entity.Response;
@@ -131,25 +131,18 @@ public class BotController {
 	
 	
 	
-	@RequestMapping(value="/question",method=RequestMethod.POST)
-	public String answer(@RequestBody  String question){
+	@RequestMapping(value="/question", method=RequestMethod.POST)
+	public @ResponseBody  Response answer(@RequestBody Question question){
+		Response response = null ;
 		List<Question> listQuestionBase = new ArrayList<Question>();
 		JaroWinkler testSimilarity  =  new JaroWinkler(); 
-		// Debut extraction de la question posee 
 		String quest = "";
-		String [] splitQuestion = question.split("&");
-		String questionEqual = splitQuestion[1]; 
-		quest = quest+questionEqual.split("=")[1];
-		quest = quest.replace("+", " "); 
-		String query = quest ; 
-		// retrait des caractere speciaux 
+		quest = question.getQuestion().trim();
+		String query = quest ;
 		quest = quest.replaceAll("[^a-zA-Z0-9]", " ");
-		quest = quest.trim(); 
 		BotController.rememberString = quest ; 
 		System.out.println("Remember question :"+BotController.rememberString ); 
-		// Fin extaction
-		System.out.println("ici la question posee est : "+quest);
-		listQuestionBase = RepoQuestion.findAllQuestionWhereAnswer_idNoEmpty();  
+		listQuestionBase = RepoQuestion.findAllQuestionWhereAnswer_idNoEmpty(); 
 		Rake R = new Rake("fr"); 
 		String[] questionPhrase = {quest}; 
 		// have unique words from user
@@ -193,19 +186,9 @@ public class BotController {
 		}
 		System.out.println("mot en commun "+maxCount);
 		if(listMax.size() == 0) {
-//			FrenchStemmer fStemmer = new  FrenchStemmer(); 
-//			for(int i=0 ; i< listWordQuestion.length; i++) {
-//				String query = listWordQuestion.toString(); 
-				Crawler google = new Crawler(); 
-				//google.getDataFromGoogle(query); 
-//				fStemmer.setCurrent(listWordQuestion[i]);
-//				if(fStemmer.stem()) {
-//					System.out.println(" stemming : "+fStemmer.getCurrent());
-//				}
-//			}
-//			String[] backQuestion = {"Que voulez vous dire par : ", };
+			Crawler google = new Crawler(); 
 			quest  = google.getDataFromGoogle(query); 
-//			= backQuestion[0]+quest ; 
+			response = new Response("Consultez le site : "+quest+" pour plus d'infomations");
 		}else if(listMax.size() == 1) {
 			BotController.rememberQuestion = listMax.get(0); 
 			String[] baseQuestion = {RepoQuestion.findById(listMax.get(0)).get().getQuestion().replaceAll("[^a-zA-Z0-9]", " ").trim()}; 
@@ -213,58 +196,59 @@ public class BotController {
 			String[] listWord = new HashSet<String>(Arrays.asList(R.getKeywords(baseQuestion))).toArray(new String[0]);
 			
 			if(listWord.length == listWordQuestion.length ) {
-				String stringResponse = RepoResponse.findById(responseIdUniqueQuestion).get().getResponse();
-				quest = stringResponse ; 
+				response = RepoResponse.findById(responseIdUniqueQuestion).get();
 			}else {
 				BotController.rememberQuestion = listMax.get(0); 
 				System.out.println("remember id  of the question : "+BotController.rememberQuestion);
-				quest = "Désolé mais voulez vous savoir : "+RepoQuestion.findById(listMax.get(0)).get().getQuestion(); 
+				response = new Response("Désolé mais voulez vous savoir : "+RepoQuestion.findById(listMax.get(0)).get().getQuestion()); 
 			}
 		}else{
-			System.out.println(" nombre de mot clé similaires : "+listMax.size());
-			double maxSimilarity = 0; 
-			List<Long> index = new ArrayList<Long>(); 
-			double similar ; 
-			boolean similar_1 = false ;
-			int i = 0; 
-			while(i < listMax.size() && similar_1 == false) {
-				System.out.println("id de la question numero : "+i+" est : "+listMax.get(i));
-				Question dbq = RepoQuestion.findById(listMax.get(i)).get(); 
-				String stringQuestion = dbq.getQuestion(); 
-				System.out.println(stringQuestion+" et "+quest);
-				similar = testSimilarity.similarity(quest, stringQuestion); 
-				System.out.println("similar = "+ similar+"id a conserver : "+dbq.getResponse().getResponse_id()); 
-				if(similar == 1) {
-					index.clear(); 
-					index.add(dbq.getResponse().getResponse_id());
-					similar_1 =  true; 
-					System.out.println("4"); 
-				}else if(similar!= 0 & similar > maxSimilarity ) {
-					System.out.println("1"); 
-					maxSimilarity = similar;
-					System.out.println("2"); 
-					index.clear();
-					System.out.println("3"); 
-					//index.add(Long.parseLong(tabQuestion[0])); 
-					index.add(dbq.getQuestion_id());
-					System.out.println("4"); 
+				System.out.println(" nombre de mot clé similaires : "+listMax.size());
+				double maxSimilarity = 0; 
+				List<Long> index = new ArrayList<Long>(); 
+				double similar ; 
+				boolean similar_1 = false ;
+				int i = 0; 
+				while(i < listMax.size() && similar_1 == false) {
+					System.out.println("id de la question numero : "+i+" est : "+listMax.get(i));
+					Question dbq = RepoQuestion.findById(listMax.get(i)).get(); 
+					String stringQuestion = dbq.getQuestion(); 
+					System.out.println(stringQuestion+" et "+quest);
+					similar = testSimilarity.similarity(quest, stringQuestion); 
+					System.out.println("similar = "+ similar+"id a conserver : "+dbq.getResponse().getResponse_id()); 
+					if(similar == 1) {
+						index.clear(); 
+						index.add(dbq.getResponse().getResponse_id());
+						similar_1 =  true; 
+						System.out.println("4"); 
+					}else if(similar!= 0 & similar > maxSimilarity ) {
+						System.out.println("1"); 
+						maxSimilarity = similar;
+						System.out.println("2"); 
+						index.clear();
+						System.out.println("3"); 
+						//index.add(Long.parseLong(tabQuestion[0])); 
+						index.add(dbq.getQuestion_id());
+						System.out.println("4"); 
+					}
+					i = i + 1; 
 				}
-				i = i + 1; 
-			}
-			System.out.println(" Fin test similarite ");
-			if(similar_1 == true) {
-				BotController.rememberQuestion =  index.get(0);
-				quest = RepoResponse.findById(index.get(0)).get().getResponse(); 
-			}else if(index.size() > 0 && similar_1 == false ) {
-				BotController.rememberQuestion =  index.get(0); 
-				System.out.println(" nombre de similaire identique : "+index.size());
-			//	Collections.sort(index);
-				quest = "Désolé mais voulez vous savoir : "+RepoQuestion.findById(index.get(0)).get().getQuestion(); 
-			}else {
-				quest="Plus d'information sur ifi.edu.vn";
-			}
-		}
-		return quest;
+				System.out.println(" Fin test similarite ");
+				if(similar_1 == true) {
+					BotController.rememberQuestion =  index.get(0);
+					quest = RepoResponse.findById(index.get(0)).get().getResponse(); 
+					response = new Response(quest);
+				}else if(index.size() > 0 && similar_1 == false ) {
+					BotController.rememberQuestion =  index.get(0); 
+					System.out.println(" nombre de similaire identique : "+index.size());
+					quest = "Désolé mais voulez vous savoir : "+RepoQuestion.findById(index.get(0)).get().getQuestion(); 
+					response = new Response(quest);
+				}else {
+						quest="Plus d'information sur www.ifi.edu.vn";
+						response = new Response(quest);
+					}
+				}
+		return response;
 	}
 
 	

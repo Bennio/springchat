@@ -50,7 +50,6 @@
 	        	  }else{
 	        		   
 	        		  pers = {
-	        				  
                       		   "person_name":name,
                       		   "person_email":email,
                       		   "person_phone":phone	                                                    
@@ -66,7 +65,7 @@
 	        				    contentType: 'application/json',
 	        				    mimeType: 'application/json',
 	        				    success: function(data) { 
-	        				        alert(data.person_email + " " +data.person_name);
+	        				       // alert(data.person_email + " " +data.person_name);
 	        				    },
 	        				    error:function(data,status,er) { 
 	        				        alert("error: "+data+" status: "+status+" er:"+er);
@@ -88,22 +87,39 @@
 		              }
 		              else{
 		            	 
-		                  box = $("#chat_div").chatbox({id:chatname, 
-		                                                user:{key : "value"},
-		                                                title : " ",
-		                                                messageSent : function(id, user, msg) {
+		                  box = $("#chat_div").chatbox({
+		                	  	id:chatname, 
+		                  		user:{key : "value"},
+                                title : " ",
+                                messageSent : function(id, user, msg) {
 		                                                  //  $("#log").append(id + " said: " + msg + "<br/>");
-		                                                    $("#chat_div").chatbox("option", "boxManager").addMsg(id, msg);
+                                $("#chat_div").chatbox("option", "boxManager").addMsg(id, msg);
 		                                                   
-		                                                   quest = {
-		                                                		   "question_id":1,
-		                                                		   "question":msg,
-		                                                		   "question_status":1	                                                    
-		                                                		   } 
-		                                                   question = quest; 
-		                                                	   //JSON.stringify(quest);
-		                                                    console.log(question); 
-		                                                    $.post(
+                                quest = {
+                             		   "question":msg,
+                             		   "question_status":1
+                             		   } ;
+                                question = JSON.stringify(quest);
+                                 console.log(question); 
+		                                                   
+                                 $.ajax({ 
+       	        				    url: "api/bot/question", 
+       	        				    type: 'POST', 
+       	        				    dataType: 'json', 
+       	        				    data: question, 
+       	        				    contentType: 'application/json',
+       	        				    mimeType: 'application/json',
+       	        				    success: function(data) { 
+       	        				    	console.log(data); 
+                                  	    id = "Bot";  
+                                  	    $("#chat_div").chatbox("option", "boxManager").addMsg(id, data.response, true);
+       	        				     
+       	        				   },
+       	        				    error:function(data,status,er) { 
+       	        				        alert("error: "+data+" status: "+status+" er:"+er);
+       	        				    }
+       	        				});
+		                                                   /*  $.post(
 		                                                    		"api/bot/question",
 				                                                    question,
 		                                                    	    function(data, status){
@@ -115,7 +131,7 @@
 		                                                    	    }
 		                                                  
 	                                                    	
-		                                                    ); 
+		                                                    );  */
 		                                                }});
 		              
 		              }

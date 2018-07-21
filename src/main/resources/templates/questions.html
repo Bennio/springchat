@@ -2,9 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
     <head>
+     	<script src="webjars/jquery/1.9.1/jquery.js"></script>
      	<link href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
      	<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-     	<script src="webjars/jquey/1.9.1/jquery.min.js"></script>
         <title>Administration</title>
     </head>
     <body>
@@ -47,7 +47,7 @@
 		      <tr>
 		      	<th>Num</th>
 		      	<th>Questions</th>
-		      	<th>ID-Reponse</th>
+		      	<th>Reponse</th>
 		      	<th>Action</th>
 		      </tr>
 		  	</thead>
@@ -55,6 +55,7 @@
 			 	 <tr th:each="question, iter: ${questions}">
 			 	 	<td th:text="${iter.index + 1}"></td>
 			      	<td th:text="${question.question}"></td>
+			      	<td th:text="${question.response.response}"></td>
 			      	<td></td>
 			      	<td>modifier - suprimer</td>
 			      </tr>
