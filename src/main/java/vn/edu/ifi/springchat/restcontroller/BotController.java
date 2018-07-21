@@ -31,11 +31,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.internal.filter.ValueNode.JsonNode;
 
 import vn.edu.ifi.springchat.controller.ChatUser;
+import vn.edu.ifi.springchat.entity.Person;
 import vn.edu.ifi.springchat.entity.Question;
 import vn.edu.ifi.springchat.entity.Response;
 import vn.edu.ifi.springchat.entity.Satisfy;
 import vn.edu.ifi.springchat.googleurlsearch.Crawler;
 import vn.edu.ifi.springchat.keywordextraction.Rake;
+import vn.edu.ifi.springchat.repository.PersonRepository;
 import vn.edu.ifi.springchat.repository.QuestionRepository;
 import vn.edu.ifi.springchat.repository.ResponseRepository;
 import vn.edu.ifi.springchat.repository.SatisfyRepository;
@@ -49,11 +51,10 @@ public class BotController {
 	
 	public static String rememberString = null ; 
 	
-	public String userName = "Utilisateur"; 
+	public Long user_id ; 
 	
-	public String userEmail = "email@info.net";
-	
-	public String userPhone = " "; 
+	@Autowired 
+	PersonRepository RepoPerson ;
 	
 	@Autowired
 	QuestionRepository RepoQuestion ; 
@@ -63,6 +64,15 @@ public class BotController {
 	
 	@Autowired
 	SatisfyRepository RepoSatisfy; 
+	
+	
+	
+	@RequestMapping(value="/register", method = RequestMethod.POST)
+	public @ResponseBody Person user( @RequestBody final  Person person) {    
+		Person pers = RepoPerson.save(person);
+	      this.user_id  = pers.getPerson_id();
+	      return person;
+	  }
 	
 	
 	@RequestMapping(value="/user",  method=RequestMethod.POST)
@@ -77,16 +87,21 @@ public class BotController {
 		System.out.println(BotController.rememberQuestion+ " question : "+BotController.rememberString); 
 		String value[] = okvalue.split("="); 
 		System.out.println(value[1].trim().equalsIgnoreCase("1")+": OK : "+okvalue.equalsIgnoreCase("ok")+" : KO :  "+okvalue.equalsIgnoreCase("ko"));
+		String msg = " ";
 		if(value[1].trim().equalsIgnoreCase("1")) {
 			Question question = RepoQuestion.findById(BotController.rememberQuestion).get();
-			Satisfy satisfy = new Satisfy("serge",this.userEmail,  1, question); 
-			String msg =RepoSatisfy.save(satisfy).getSatisfy_name(); 
+			Person person = RepoPerson.findById(this.user_id).get();
+			Satisfy satisfy = new Satisfy(1,person, question ); 
+			msg =RepoSatisfy.save(satisfy).getPerson().getPerson_name(); 
+			//Satisfy satisfy = new Satisfy("serge","useremail@info.com",  1, question); 
+			//String msg =RepoSatisfy.save(satisfy).getSatisfy_name(); 
 			System.out.println(msg);
 		}else if(value[1].trim().equalsIgnoreCase("0")) {
 			Question question = new Question(BotController.rememberString); 
 			question = RepoQuestion.save(question); 
-			Satisfy satisfy = new Satisfy("daouda",this.userEmail, 0, question ); 
-			String msg =RepoSatisfy.save(satisfy).getSatisfy_name(); 
+			Person person = RepoPerson.findById(this.user_id).get();
+			Satisfy satisfy = new Satisfy(0,person, question ); 
+			msg =RepoSatisfy.save(satisfy).getPerson().getPerson_name(); 
 			System.out.println(msg);
 		}
 		BotController.rememberQuestion = null; 
@@ -113,6 +128,8 @@ public class BotController {
 		
 		return response ; 
 	}
+	
+	
 	
 	@RequestMapping(value="/question",method=RequestMethod.POST)
 	public String answer(@RequestBody  String question){
