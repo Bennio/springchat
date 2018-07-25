@@ -188,7 +188,7 @@ public class BotController {
 		if(listMax.size() == 0) {
 			Crawler google = new Crawler(); 
 			quest  = google.getDataFromGoogle(query); 
-			response = new Response("Consultez le site : "+quest+" pour plus d'infomations");
+			response = new Response(quest);
 		}else if(listMax.size() == 1) {
 			BotController.rememberQuestion = listMax.get(0); 
 			String[] baseQuestion = {RepoQuestion.findById(listMax.get(0)).get().getQuestion().replaceAll("[^a-zA-Z0-9]", " ").trim()}; 

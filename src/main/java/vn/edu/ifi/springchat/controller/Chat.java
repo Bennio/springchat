@@ -104,7 +104,9 @@ public class Chat {
 	public String allQuestions(Model model) {
 		List<Question> allquestions = RepoQuestion.findAllQuestionWhereAnswer_idNoEmpty();
 		List<Response> allresponses = RepoResponse.findAll(); 
+		System.out.println(" taille response "+allresponses.size());
 		model.addAttribute("questions", allquestions); 
+		model.addAttribute("responses", allresponses); 
 		return "questions" ; 
 	}
 
