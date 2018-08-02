@@ -1,7 +1,7 @@
 # springchat
 ## A chatbot is a program that is used to participate in conversations with humans
 ## Technologies 
-###Java
+### Java
 Java is an object oriented programming language that can be used to develop software that it can
 run on a variety of operating systems without modification. Moreover it is simple to use language,
 with a large number of APIs, sufficient documentation and it is free.
@@ -23,3 +23,5 @@ configuration file where Java beans can be created, transactions can be handled,
 manage each transaction separately and security can be managed. Data access objects can be used
 on top of the Hibernate, which reduces errors and simplifies the development process. Testing
 application code written using Spring is easier than other similar technologies.
+
+
