@@ -23,5 +23,9 @@ configuration file where Java beans can be created, transactions can be handled,
 manage each transaction separately and security can be managed. Data access objects can be used
 on top of the Hibernate, which reduces errors and simplifies the development process. Testing
 application code written using Spring is easier than other similar technologies.
-
-
+### Google API
+The Google search Java API has been used and
+requires communication with the Google search server on user request
+### JaroWinkle 
+Normalized String Distance
+Normalized String Similarity
