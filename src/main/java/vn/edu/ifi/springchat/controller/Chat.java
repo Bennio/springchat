@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.edu.ifi.springchat.entity.Question;
@@ -57,6 +58,30 @@ public class Chat {
 	@RequestMapping("/super")
 	public String chatAdmin() {
 		return "super"; 
+	}
+	
+	@RequestMapping(value="/satisfy", method=RequestMethod.GET )
+	public String answerSatisfy(@RequestParam Long id,Long idsatisfy, Model model) {
+		Question question = RepoQuestion.findById(id).get();
+		model.addAttribute("idquestion",question.getQuestion_id());
+		model.addAttribute("idsatisfy",idsatisfy);
+		model.addAttribute("question",question.getQuestion());
+		return "satisfy";
+	}
+	
+	@RequestMapping(value="/savesatisfy", method=RequestMethod.POST )
+	public ModelAndView saveSatisfy(@RequestBody MultiValueMap<String, String> formData, ModelMap model ) {
+		System.out.println("reponse "+formData);
+		String resp = formData.get("response").get(0); 
+		Response answer = new Response(resp); 
+		answer = RepoResponse.save(answer);
+		Question question = RepoQuestion.findById(Long.parseLong(formData.get("idquestion").get(0))).get();
+		question.setResponse(answer);
+		RepoQuestion.save(question);
+		Satisfy satisfy = RepoSatisfy.findById(Long.parseLong(formData.get("idsatisfy").get(0))).get();
+		satisfy.setSatisfy(1);
+		RepoSatisfy.save(satisfy);
+		return new ModelAndView("forward:/admin", model);
 	}
 	
 	@RequestMapping("/responses")

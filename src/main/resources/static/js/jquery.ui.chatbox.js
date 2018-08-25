@@ -24,7 +24,7 @@ function ValidURL(str) {
 }
 function Question(quest){
 	tab = quest.split(" "); 
-	//alert(tab[0]); 
+	//alert(tab[0]+" question "); 
 	switch(tab[0]){
 		case 'Désolé':{
 			console.log("desole"); 
@@ -32,7 +32,7 @@ function Question(quest){
 			break; 
 		} 
 		default:{
-			
+			return false; 
 		}
 	}
 }

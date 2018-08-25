@@ -188,19 +188,21 @@ public class BotController {
 		if(listMax.size() == 0) {
 			Crawler google = new Crawler(); 
 			quest  = google.getDataFromGoogle(query); 
+			
 			response = new Response(quest);
-		}else if(listMax.size() == 1) {
+		}else if(listMax.size() >=1 && listWordQuestion.length == maxCount && listMax.size() == listWordQuestion.length ) {
+			System.out.println("listMax ");
 			BotController.rememberQuestion = listMax.get(0); 
+			System.out.println("listMax2");
 			String[] baseQuestion = {RepoQuestion.findById(listMax.get(0)).get().getQuestion().replaceAll("[^a-zA-Z0-9]", " ").trim()}; 
 			// have unique words from database question
 			String[] listWord = new HashSet<String>(Arrays.asList(R.getKeywords(baseQuestion))).toArray(new String[0]);
-			
-			if(listWord.length == listWordQuestion.length ) {
-				response = RepoResponse.findById(responseIdUniqueQuestion).get();
-			}else {
-				BotController.rememberQuestion = listMax.get(0); 
-				System.out.println("remember id  of the question : "+BotController.rememberQuestion);
-				response = new Response("Désolé mais voulez vous savoir : "+RepoQuestion.findById(listMax.get(0)).get().getQuestion()); 
+			System.out.println("listMax3   -----"+listWord.length);
+			if(true) {
+				System.out.println(responseIdUniqueQuestion);
+				response = RepoResponse.findById(RepoQuestion.findById(responseIdUniqueQuestion).get().getResponse().getResponse_id()).get();
+				response = new Response(response.getResponse());
+				System.out.println("listMax4 ");
 			}
 		}else{
 				System.out.println(" nombre de mot clé similaires : "+listMax.size());
@@ -248,6 +250,7 @@ public class BotController {
 						response = new Response(quest);
 					}
 				}
+		System.out.println(response.getResponse());
 		return response;
 	}
 
